@@ -1,0 +1,31 @@
+{
+  "name": "aeviiq/factory",
+  "type": "library",
+  "description": "Factory component for the Symfony Dependency Injection component",
+  "keywords": [
+    "factory"
+  ],
+  "homepage": "https://github.com/aeviiq/factory",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Aeviiq Factory contributors",
+      "homepage": "https://github.com/aeviiq/factory/graphs/contributors"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Aeviiq\\Factory\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Aeviiq\\Tests\\Factory\\": "tests/"
+    }
+  },
+  "require": {
+    "php": ">=7.2",
+    "ext-json": "*",
+    "symfony/dependency-injection": "^4.2"
+  }
+}
