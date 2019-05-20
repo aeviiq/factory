@@ -10,4 +10,6 @@ interface Factory
      * @return string FQN of the target class
      */
     public function getTarget(): string;
+
+    public function getByFqn(string $fqn): object;
 }
