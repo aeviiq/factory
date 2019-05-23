@@ -9,7 +9,7 @@ anything outside the factory, as the factory itself always knows what it will re
 composer require aeviiq/factory
 ```
 ##### Symfony >= version 4
-```
+```php
 // src/Kernel.php
 namespace App;
 
@@ -31,7 +31,7 @@ class Kernel extends BaseKernel
 }
 ```
 ##### Symfony < version 4
-```
+```php
 // src/AppBundle/AppBundle.php
 namespace AppBundle;
 
