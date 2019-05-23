@@ -8,26 +8,7 @@ anything outside the factory, as the factory itself always knows what it will re
 ```
 composer require aeviiq/factory
 ```
-##### Symfony < version 4
-```
-// src/AppBundle/AppBundle.php
-namespace AppBundle;
-
-use AppBundle\DependencyInjection\Compiler\CustomPass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-class AppBundle extends Bundle
-{
-    public function build(ContainerBuilder $container)
-    {
-        parent::build($container);
-
-        $container->addCompilerPass(new FactoryCompilerPass());
-    }
-}
-```
-#####Symfony >= version 4
+##### Symfony >= version 4
 ```
 // src/Kernel.php
 namespace App;
@@ -45,6 +26,25 @@ class Kernel extends BaseKernel
 
     protected function build(ContainerBuilder $container): void
     {
+        $container->addCompilerPass(new FactoryCompilerPass());
+    }
+}
+```
+##### Symfony < version 4
+```
+// src/AppBundle/AppBundle.php
+namespace AppBundle;
+
+use AppBundle\DependencyInjection\Compiler\CustomPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+
+class AppBundle extends Bundle
+{
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+
         $container->addCompilerPass(new FactoryCompilerPass());
     }
 }
