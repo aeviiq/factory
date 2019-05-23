@@ -55,6 +55,9 @@ final class EncoderFactory extends AbstractFactory
 {
     public function getEncoder(User $user): Encoder
     {
+        // getOneBy ensures 1, and only 1 encoder is returned. 
+        // In case multiple encoders (or none) are found, a LogicException will be thrown.
+        // In case the result is optional, you could use the getOneOrNullBy().
         return $this->getOneBy(static function (Encoder $encoder) use ($user) {
             return $encoder->supports($user);
         });
