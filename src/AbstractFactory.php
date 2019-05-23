@@ -19,11 +19,11 @@ abstract class AbstractFactory implements Factory
 
     final public function register(object $registrable, bool $shared): void
     {
-        if (in_array($registrable, $this->registry, true)) {
+        if (\in_array($registrable, $this->registry, true)) {
             throw LogicException::alreadyRegistered($registrable);
         }
 
-        if (!in_array($this->getTarget(), class_implements($registrable), true)) {
+        if (!\in_array($this->getTarget(), class_implements($registrable), true)) {
             throw InvalidArgumentException::subjectDoesNotImplementRequirement($registrable, $this->getTarget());
         }
 
@@ -37,7 +37,7 @@ abstract class AbstractFactory implements Factory
     final public function getTarget(): string
     {
         $target = $this->getTargetInterface();
-        if (!interface_exists($target)) {
+        if (!\interface_exists($target)) {
             throw LogicException::factoryTargetMustBeAnExistingInterface($this, $target);
         }
 
@@ -47,7 +47,7 @@ abstract class AbstractFactory implements Factory
     public function getByFqn(string $fqn): object
     {
         return $this->getOneBy(static function (object $service) use ($fqn): bool {
-            return $fqn === get_class($service);
+            return $fqn === \get_class($service);
         });
     }
 
@@ -79,17 +79,17 @@ abstract class AbstractFactory implements Factory
      */
     private function search(callable $criteria): ?object
     {
-        $filteredRegistry = array_filter($this->registry, $criteria);
+        $filteredRegistry = \array_filter($this->registry, $criteria);
         if (empty($filteredRegistry)) {
             return null;
         }
 
-        if (count($filteredRegistry) > 1) {
+        if (\count($filteredRegistry) > 1) {
             throw LogicException::multipleCandidatesFound($this);
         }
 
         $registrable = reset($filteredRegistry);
-        if (in_array(spl_object_hash($registrable), $this->unsharedRegistry, true)) {
+        if (\in_array(\spl_object_hash($registrable), $this->unsharedRegistry, true)) {
             return clone $registrable;
         }
 
