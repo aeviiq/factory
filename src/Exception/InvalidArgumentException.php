@@ -2,7 +2,7 @@
 
 namespace Aeviiq\Factory\Exception;
 
-final class InvalidArgumentException extends \InvalidArgumentException implements IException
+final class InvalidArgumentException extends \InvalidArgumentException implements Throwable
 {
     public static function subjectDoesNotImplementRequirement(object $subject, string $requirement): InvalidArgumentException
     {
