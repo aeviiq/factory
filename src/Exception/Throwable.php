@@ -2,6 +2,6 @@
 
 namespace Aeviiq\Factory\Exception;
 
-interface IException extends \Throwable
+interface Throwable extends \Throwable
 {
 }

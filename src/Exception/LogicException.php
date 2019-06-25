@@ -2,7 +2,7 @@
 
 namespace Aeviiq\Factory\Exception;
 
-final class LogicException extends \LogicException implements IException
+final class LogicException extends \LogicException implements Throwable
 {
     public static function alreadyRegistered(object $subject): LogicException
     {
