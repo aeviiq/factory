@@ -26,7 +26,12 @@ final class FactoryCompilerPass implements CompilerPassInterface
             if ($r->implementsInterface(Factory::class)) {
                 $t = $r->newInstanceWithoutConstructor()->getTarget();
                 if (isset($factories[$t])) {
-                    throw LogicException::multipleFactoriesWithSameTarget($t, $factories[$t]->getClass(), $r->getName());
+                    throw new LogicException(\sprintf(
+                        '"%s" is targeted by "%s" and "%s". This is not allowed.',
+                        $t,
+                        $factories[$t]->getClass(),
+                        $r->getName()
+                    ));
                 }
                 $factories[$t] = $d;
                 unset($definitions[$k]);

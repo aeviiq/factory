@@ -20,11 +20,11 @@ abstract class AbstractFactory implements Factory
     final public function register(object $registrable, bool $shared): void
     {
         if (\in_array($registrable, $this->registry, true)) {
-            throw LogicException::alreadyRegistered($registrable);
+            throw $this->createLogicException(\sprintf('%s is already registered.', \get_class($registrable)));
         }
 
-        if (!\in_array($this->getTarget(), class_implements($registrable), true)) {
-            throw InvalidArgumentException::subjectDoesNotImplementRequirement($registrable, $this->getTarget());
+        if (!\in_array($this->getTarget(), \class_implements($registrable), true)) {
+            throw $this->createInvalidArgumentException(\sprintf('%s must implement %s', \get_class($registrable), $this->getTarget()));
         }
 
         if (!$shared) {
@@ -38,7 +38,7 @@ abstract class AbstractFactory implements Factory
     {
         $target = $this->getTargetInterface();
         if (!\interface_exists($target)) {
-            throw LogicException::factoryTargetMustBeAnExistingInterface($this, $target);
+            throw $this->createLogicException(\sprintf('The target for "%s" must be an existing interface. "%s" given.', \get_class($this), $target));
         }
 
         return $target;
@@ -68,10 +68,20 @@ abstract class AbstractFactory implements Factory
     {
         $result = $this->search($criteria);
         if (null === $result) {
-            throw LogicException::noCandidatesFound($this);
+            throw $this->createLogicException(\sprintf('Unable to find the requested service in "%s".', \get_class($this)));
         }
 
         return $result;
+    }
+
+    protected function createLogicException(string $message): \LogicException
+    {
+        return new LogicException($message);
+    }
+
+    protected function createInvalidArgumentException(string $message): \InvalidArgumentException
+    {
+        return new InvalidArgumentException($message);
     }
 
     /**
@@ -85,10 +95,10 @@ abstract class AbstractFactory implements Factory
         }
 
         if (\count($filteredRegistry) > 1) {
-            throw LogicException::multipleCandidatesFound($this);
+            throw $this->createLogicException(\sprintf('Multiple services were found in "%s". The result is ambiguous.', \get_class($this)));
         }
 
-        $registrable = reset($filteredRegistry);
+        $registrable = \reset($filteredRegistry);
         if (\in_array(\spl_object_hash($registrable), $this->unsharedRegistry, true)) {
             return clone $registrable;
         }
