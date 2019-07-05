@@ -2,9 +2,11 @@
 
 namespace Aeviiq\Factory;
 
-interface Factory
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+
+interface Factory extends ContainerAwareInterface
 {
-    public function register(object $service, bool $shared): void;
+    public function register(string $serviceId): void;
 
     /**
      * @return string FQN of the target class

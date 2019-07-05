@@ -2,9 +2,9 @@
 
 namespace Aeviiq\Factory;
 
-use Aeviiq\Factory\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 final class FactoryCompilerPass implements CompilerPassInterface
 {
@@ -12,42 +12,38 @@ final class FactoryCompilerPass implements CompilerPassInterface
     {
         $definitions = $container->getDefinitions();
         $factories = [];
-        foreach ($definitions as $k => $d) {
-            if ($d->isAbstract()) {
-                unset($definitions[$k]);
+        foreach ($definitions as $serviceId => $definition) {
+            if ($definition->isAbstract()) {
+                unset($definitions[$serviceId]);
                 continue;
             }
 
-            if (null === $r = $container->getReflectionClass($d->getClass(), false)) {
-                unset($definitions[$k]);
+            if (null === $r = $container->getReflectionClass($definition->getClass(), false)) {
+                unset($definitions[$serviceId]);
                 continue;
             }
 
-            if ($r->implementsInterface(Factory::class)) {
-                $t = $r->newInstanceWithoutConstructor()->getTarget();
-                if (isset($factories[$t])) {
-                    throw new LogicException(\sprintf(
-                        '"%s" is targeted by "%s" and "%s". This is not allowed.',
-                        $t,
-                        $factories[$t]->getClass(),
-                        $r->getName()
-                    ));
-                }
-                $factories[$t] = $d;
-                unset($definitions[$k]);
+            if (!$r->implementsInterface(Factory::class)) {
+                continue;
             }
+
+            $definition->addMethodCall('setContainer', [new Reference('service_container')]);
+            $factories[] = [$r->newInstanceWithoutConstructor()->getTarget(), $definition];
+            unset($definitions[$serviceId]);
         }
 
-        foreach ($definitions as $d) {
-            foreach ($factories as $target => $factory) {
-                if (null === $r = $container->getReflectionClass($d->getClass())) {
+        foreach ($definitions as $serviceId => $definition) {
+            foreach ($factories as [$target, $factory]) {
+                if (null === $r = $container->getReflectionClass($definition->getClass())) {
                     continue 2;
                 }
 
-                if ($r->implementsInterface($target)) {
-                    $factory->addMethodCall('register', [$d, $d->isShared()]);
-                    continue 2;
+                if (!$r->implementsInterface($target)) {
+                    continue;
                 }
+
+                $definition->setPublic(true);
+                $factory->addMethodCall('register', [$serviceId]);
             }
         }
     }
