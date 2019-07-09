@@ -2,6 +2,6 @@
 
 namespace Aeviiq\Factory\Exception;
 
-final class LogicException extends \LogicException implements Throwable
+final class LogicException extends \LogicException implements ExceptionInterface
 {
 }

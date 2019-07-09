@@ -5,7 +5,7 @@ namespace Aeviiq\Factory;
 use Aeviiq\Factory\Exception\LogicException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-abstract class ServiceFactory implements Factory
+abstract class AbstractServiceFactory implements FactoryInterface
 {
     /**
      * @var ContainerInterface

@@ -53,7 +53,7 @@ class AppBundle extends Bundle
 
 ## Declaration
 ```php
-final class EncoderFactory extends ServiceFactory
+final class EncoderFactory extends AbstractServiceFactory
 {
     public function getEncoder(User $user): Encoder
     {
@@ -80,11 +80,11 @@ final class EncoderFactory extends ServiceFactory
 final class Foo
 {
     /**
-     * @var Factory
+     * @var FactoryInterface
      */
     private $encoderFactory;
 
-    public function __construct(Factory $encoderFactory)
+    public function __construct(FactoryInterface $encoderFactory)
     {
         $this->encoderFactory = $encoderFactory;
     }

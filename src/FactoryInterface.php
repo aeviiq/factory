@@ -4,7 +4,7 @@ namespace Aeviiq\Factory;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
-interface Factory extends ContainerAwareInterface
+interface FactoryInterface extends ContainerAwareInterface
 {
     public function register(string $serviceId): void;
 

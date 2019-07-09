@@ -23,7 +23,7 @@ final class FactoryCompilerPass implements CompilerPassInterface
                 continue;
             }
 
-            if (!$r->implementsInterface(Factory::class)) {
+            if (!$r->implementsInterface(FactoryInterface::class)) {
                 continue;
             }
 
