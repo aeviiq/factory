@@ -1,7 +1,7 @@
 {
     "name": "aeviiq/factory",
     "type": "library",
-    "description": "Factory component for the Symfony Dependency Injection component",
+    "description": "Service Factory Component",
     "keywords": [
         "factory"
     ],
