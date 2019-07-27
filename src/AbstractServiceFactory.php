@@ -44,6 +44,8 @@ abstract class AbstractServiceFactory implements FactoryInterface
         $this->container = $container;
     }
 
+    abstract protected function getTargetInterface(): string;
+
     /**
      * @return object[] The services that are registered with this factory.
      */
@@ -53,8 +55,6 @@ abstract class AbstractServiceFactory implements FactoryInterface
             return $this->container->get($serviceId);
         }, $this->serviceIds[$this->getTarget()] ?? []);
     }
-
-    abstract protected function getTargetInterface(): string;
 
     /**
      * @throws LogicException When no service was found.
