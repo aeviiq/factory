@@ -61,7 +61,7 @@ abstract class AbstractServiceFactory implements FactoryInterface
      */
     protected function getOneBy(callable $criteria): object
     {
-        $result = $this->search($criteria);
+        $result = $this->getOneOrNullBy($criteria);
         if (null === $result) {
             throw $this->createLogicException(\sprintf('Unable to find the requested service in "%s".', \get_class($this)));
         }
@@ -74,19 +74,6 @@ abstract class AbstractServiceFactory implements FactoryInterface
      */
     protected function getOneOrNullBy(callable $criteria): ?object
     {
-        return $this->search($criteria);
-    }
-
-    protected function createLogicException(string $message): \LogicException
-    {
-        return new LogicException($message);
-    }
-
-    /**
-     * @throws LogicException When multiple services were found.
-     */
-    private function search(callable $criteria): ?object
-    {
         $services = \array_filter($this->getServices(), $criteria);
         if (empty($services)) {
             return null;
@@ -97,5 +84,10 @@ abstract class AbstractServiceFactory implements FactoryInterface
         }
 
         return \array_shift($services);
+    }
+
+    protected function createLogicException(string $message): \LogicException
+    {
+        return new LogicException($message);
     }
 }
