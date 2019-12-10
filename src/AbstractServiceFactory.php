@@ -32,6 +32,13 @@ abstract class AbstractServiceFactory implements FactoryInterface
         return $target;
     }
 
+    /**
+     * @template T
+     * @param class-string<T> $fqn
+     *
+     * @return T
+     * @throws LogicException
+     */
     final public function getByFqn(string $fqn): object
     {
         return $this->getOneBy(static function (object $service) use ($fqn): bool {
