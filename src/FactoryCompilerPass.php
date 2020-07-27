@@ -27,8 +27,11 @@ final class FactoryCompilerPass implements CompilerPassInterface
                 continue;
             }
 
+            /** @var FactoryInterface<object> $factory */
+            $factory = $r->newInstanceWithoutConstructor();
+
             $definition->addMethodCall('setContainer', [new Reference('service_container')]);
-            $factories[] = [$r->newInstanceWithoutConstructor()->getTarget(), $definition];
+            $factories[] = [$factory->getTarget(), $definition];
             unset($definitions[$serviceId]);
         }
 
