@@ -66,7 +66,8 @@ final class ServiceFactoryTest extends TestCase
 
     private function createInvalidFactory(): AbstractServiceFactory
     {
-        return new class() extends AbstractServiceFactory {
+        return new class() extends AbstractServiceFactory
+        {
             protected function getTargetInterface(): string
             {
                 return 'foo';
@@ -76,7 +77,8 @@ final class ServiceFactoryTest extends TestCase
 
     private function createFactory(): AbstractServiceFactory
     {
-        return new class() extends AbstractServiceFactory {
+        return new class() extends AbstractServiceFactory
+        {
             protected function getTargetInterface(): string
             {
                 return \Traversable::class;
