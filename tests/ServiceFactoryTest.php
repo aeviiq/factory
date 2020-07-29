@@ -37,9 +37,20 @@ final class ServiceFactoryTest extends TestCase
 
     public function testGetByFqnWithMissingFqn(): void
     {
+        $mockedContainer = $this->createMock(ContainerInterface::class);
+
         $factory = $this->createFactory();
+        $factory->setContainer($mockedContainer);
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(\sprintf('Unable to find the requested service in "%s".', \get_class($factory)));
+        $factory->getByFqn(\stdClass::class);
+    }
+
+    public function testGetWithoutContainer(): void
+    {
+        $factory = $this->createFactory();
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage(sprintf('Use %s::setContainer to set the container before using the factory.', \get_class($factory)));
         $factory->getByFqn(\stdClass::class);
     }
 

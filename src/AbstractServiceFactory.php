@@ -6,11 +6,9 @@ use Aeviiq\Factory\Exception\LogicException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * @psalm-template T of object
- * @phpstan-template T of object
+ * @template T of object
  *
- * @psalm-implements FactoryInterface<T>
- * @phpstan-implements FactoryInterface<T>
+ * @implements FactoryInterface<T>
  */
 abstract class AbstractServiceFactory implements FactoryInterface
 {
@@ -20,7 +18,6 @@ abstract class AbstractServiceFactory implements FactoryInterface
     private $container;
 
     /**
-     * @psalm-var array<class-string<T>, array<int, string>>
      * @phpstan-var array<class-string<T>, array<int, string>>
      * @var array<string, array<int, string>>
      */
@@ -54,25 +51,25 @@ abstract class AbstractServiceFactory implements FactoryInterface
     }
 
     /**
-     * @psalm-return class-string<T>
      * @phpstan-return class-string<T>
      */
     abstract protected function getTargetInterface(): string;
 
     /**
-     * @psalm-return array<int, T>
      * @phpstan-return array<int, T>
      * @return array<int, object> The services that are registered with this factory.
      */
     protected function getServices(): array
     {
-        return \array_map(function (string $serviceId) {
-            return $this->container->get($serviceId);
+        $container = $this->getContainer();
+
+        return \array_map(static function (string $serviceId) use ($container) {
+            /** @phpstan-var T */
+            return $container->get($serviceId);
         }, $this->serviceIds[$this->getTarget()] ?? []);
     }
 
     /**
-     * @psalm-return T
      * @phpstan-return T
      *
      * @throws LogicException When no service was found.
@@ -88,7 +85,6 @@ abstract class AbstractServiceFactory implements FactoryInterface
     }
 
     /**
-     * @psalm-return T|null
      * @phpstan-return T|null
      *
      * @throws LogicException When multiple services were found.
@@ -110,5 +106,14 @@ abstract class AbstractServiceFactory implements FactoryInterface
     protected function createLogicException(string $message): \LogicException
     {
         return new LogicException($message);
+    }
+
+    private function getContainer(): ContainerInterface
+    {
+        if (null === $this->container) {
+            throw $this->createLogicException(sprintf('Use %s::setContainer to set the container before using the factory.', static::class));
+        }
+
+        return $this->container;
     }
 }
