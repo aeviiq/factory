@@ -10,42 +10,30 @@ final class FactoryCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        $definitions = $container->getDefinitions();
         $factories = [];
-        foreach ($definitions as $serviceId => $definition) {
-            if ($definition->isAbstract()) {
-                unset($definitions[$serviceId]);
-                continue;
-            }
-
-            if (null === $r = $container->getReflectionClass($definition->getClass(), false)) {
-                unset($definitions[$serviceId]);
+        $targets = [];
+        foreach ($container->getDefinitions() as $serviceId => $definition) {
+            if ($definition->isAbstract() || null === $r = $container->getReflectionClass($definition->getClass(), false)) {
                 continue;
             }
 
             if (!$r->implementsInterface(FactoryInterface::class)) {
+                foreach ($r->getInterfaces() as $interface => $reflectionClass) {
+                    $targets[$interface][] = $serviceId;
+                }
+
                 continue;
             }
 
             /** @var FactoryInterface<object> $factory */
             $factory = $r->newInstanceWithoutConstructor();
-
             $definition->addMethodCall('setContainer', [new Reference('service_container')]);
             $factories[] = [$factory->getTarget(), $definition];
-            unset($definitions[$serviceId]);
         }
 
-        foreach ($definitions as $serviceId => $definition) {
-            foreach ($factories as [$target, $factory]) {
-                if (null === $r = $container->getReflectionClass($definition->getClass())) {
-                    continue 2;
-                }
-
-                if (!$r->implementsInterface($target)) {
-                    continue;
-                }
-
-                $definition->setPublic(true);
+        foreach ($factories as [$target, $factory]) {
+            foreach ($targets[$target] as $serviceId) {
+                $container->getDefinition($serviceId)->setPublic(true);
                 $factory->addMethodCall('register', [$serviceId]);
             }
         }
