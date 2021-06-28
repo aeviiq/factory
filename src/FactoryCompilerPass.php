@@ -32,6 +32,10 @@ final class FactoryCompilerPass implements CompilerPassInterface
         }
 
         foreach ($factories as [$target, $factory]) {
+            if (!isset($targets[$target])) {
+                continue;
+            }
+
             foreach ($targets[$target] as $serviceId) {
                 $container->getDefinition($serviceId)->setPublic(true);
                 $factory->addMethodCall('register', [$serviceId]);
